@@ -7,4 +7,6 @@ pub struct PostbackParams<'a> {
     pub order_id: &'a str,
     pub amount: &'a str,
     pub currency: &'a str,
+    pub coupon: Option<&'a str>,
+    pub new_customer: bool,
 }

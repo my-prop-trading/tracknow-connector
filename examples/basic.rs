@@ -5,19 +5,18 @@ async fn main() {
     let base_url = std::env::var("TRACKNOW_URL").unwrap();
     let client = TracknowApiClient::new(base_url);
 
-    let result = client
+    client
         .postback(&PostbackParams {
             click_id: "test_click_id",
             campaign_id: "7",
             order_id: "test_order_id",
             amount: "10",
             currency: "USD",
+            coupon: Some("test_coupon"),
+            new_customer: false,
         })
-        .await;
+        .await
+        .unwrap();
 
-    if let Err(err) = result {
-        println!("Failed: {err}");
-    }
-
-    println!("Run basic example: OK");
+    println!("Run basic example: FINISHED");
 }
