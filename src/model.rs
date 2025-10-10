@@ -5,6 +5,6 @@ pub struct PostbackParams<'a> {
     pub click_id: &'a str,
     pub campaign_id: &'a str,
     pub order_id: &'a str,
-    pub amount: u32,
+    pub amount: &'a str,
     pub currency: &'a str,
 }
