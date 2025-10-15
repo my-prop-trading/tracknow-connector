@@ -2,14 +2,12 @@ use crate::model::{PostbackParams, PostbackResponse};
 
 pub struct TracknowApiClient {
     base_url: String,
-    client: reqwest::Client,
 }
 
 impl TracknowApiClient {
     pub fn new(base_url: impl Into<String>) -> Self {
         Self {
             base_url: base_url.into(),
-            client: reqwest::Client::new(),
         }
     }
 
@@ -17,23 +15,38 @@ impl TracknowApiClient {
         &self,
         params: &PostbackParams<'a>,
     ) -> Result<PostbackResponse, String> {
-        let url = format!("{}/postback", self.base_url);
+        let query = serde_urlencoded::to_string(&params).unwrap();
+        let url = format!("{}/postback?{}", self.base_url, query);
 
-        let res = self
-            .client
-            .get(&url)
-            .query(params)
-            .send()
-            .await
-            .map_err(|e| e.to_string())?;
-        let status = res.status();
-        let body = res.text().await.unwrap_or_default();
+        let flurl = flurl::FlUrl::new(&url);
+        let result = flurl.get().await;
 
-        if status.is_success() {
-            serde_json::from_str::<PostbackResponse>(&body)
-                .map_err(|e| format!("Failed to parse JSON: {}\nBody: {}", e, body))
-        } else {
-            Err(format!("HTTP {}: {}", status, body))
-        }
+        let Ok(resp) = result else {
+            return Err(format!(
+                "FlUrl failed to receive_body: Url: {} {:?}",
+                url,
+                result.unwrap_err()
+            )
+            .into());
+        };
+
+        let result = resp.receive_body().await;
+
+        let Ok(body_bytes) = result else {
+            return Err(format!("FlUrl failed to receive_body: {:?}", result.unwrap_err()).into());
+        };
+
+        let body_str = String::from_utf8(body_bytes).unwrap();
+        let result: Result<PostbackResponse, _> = serde_json::from_str(&body_str);
+
+        let Ok(resp) = result else {
+            let msg = format!(
+                "Failed to deserialize: {:?}. Url: {:?} Body: {}",
+                result, url, body_str
+            );
+            return Err(msg.into());
+        };
+
+        Ok(resp)
     }
 }
