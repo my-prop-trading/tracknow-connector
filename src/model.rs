@@ -13,7 +13,7 @@ pub struct PostbackParams<'a> {
 
 #[derive(Deserialize, Debug)]
 pub struct PostbackResponse {
-    pub message: String,
-    pub id: String,
+    pub message: Option<String>,
+    pub id: Option<String>,
     pub success: bool,
 }
