@@ -1,4 +1,4 @@
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 #[derive(Serialize)]
 pub struct PostbackParams<'a> {
@@ -9,4 +9,11 @@ pub struct PostbackParams<'a> {
     pub currency: &'a str,
     pub coupon: Option<&'a str>,
     pub new_customer: bool,
+}
+
+#[derive(Deserialize, Debug)]
+pub struct PostbackResponse {
+    pub message: String,
+    pub id: String,
+    pub success: bool,
 }

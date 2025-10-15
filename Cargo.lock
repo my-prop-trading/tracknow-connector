@@ -1240,10 +1240,11 @@ dependencies = [
 
 [[package]]
 name = "tracknow-connector"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "reqwest",
  "serde",
+ "serde_json",
  "tokio",
 ]
 

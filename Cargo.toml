@@ -1,6 +1,6 @@
 [package]
 name = "tracknow-connector"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 authors = ["Maxim Gorin <mxmgorin@gmail.com>"]
 
@@ -8,6 +8,7 @@ authors = ["Maxim Gorin <mxmgorin@gmail.com>"]
 
 [dependencies]
 serde = "1.0.228"
+serde_json = "1.0.145"
 reqwest = "0.12.23"
 
 [dev-dependencies]
